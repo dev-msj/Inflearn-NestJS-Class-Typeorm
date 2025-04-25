@@ -17,6 +17,28 @@ import {
  * - 각 자식 엔티티(BookModel, CarModel)는 별도의 테이블로 생성됨
  * - 각 테이블은 BaseModel의 모든 컬럼을 포함함
  */
+/**
+ * 개인적인 생각으로는 아래와 같이 3가지 모델로 분리하여 템플릿처럼 적용하면 더 좋을 것 같다.
+ *
+ * export class BaseModel {
+ *  @CreateDateColumn()
+ *  createdAt: Date;
+ *
+ *  @UpdateDateColumn()
+ *  updatedAt: Date;
+ * }
+ *
+ * export class BaseAutoIncrementModel {
+ *  @PrimaryGeneratedColumn()
+ *  id: number;
+ * }
+ *
+ *
+ * export class BaseUUIDModel {
+ *  @PrimaryGeneratedColumn()
+ *  id: number;
+ * }
+ */
 export class BaseModel {
   @PrimaryGeneratedColumn()
   id: number;
