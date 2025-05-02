@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -89,7 +90,39 @@ export class UserModel {
   @Generated('uuid') // 데이터를 생성할 때마다 uuid 생성
   addotionalId: string;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.user)
+  @OneToOne(() => ProfileModel, (profile) => profile.user, {
+    /* 여기 작성된 option들은 OneToOne, ManyToOne, ManyToMany에 모두 적용 가능하다. */
+
+    // find()를 실행할 때마다 항상 relation된 entity도 같이 가져옴. 기본값은 false.
+    eager: true,
+    // "저장"할 때 relation된 entity도 같이 저장됨. 기본값은 false.
+    cascade: true,
+    // null 허용 여부. 기본값은 true.
+    nullable: false,
+    /**
+     * onDelete 옵션: postgresql에서만 사용 가능.
+     *
+     * * 부모 테이블: ProfileModel
+     * * 자식 테이블: UserModel
+     *
+     * - NO ACTION: 부모 테이블의 row가 삭제될 때, 자식 테이블는 아무런 동작을 하지 않음.
+     * - CASCADE: 부모 테이블의 row가 삭제될 때, 이를 참조하는 자식 테이블의 row도 같이 삭제됨.
+     * - SET NULL: 부모 테이블의 row가 삭제될 때, 이를 참조하는 자식 테이블의 외래키를 NULL로 설정함.
+     * - RESTRICT: 부모 테이블의 row가 삭제될 때, 이를 참조하는 자식 테이블이 존재하면 삭제되지 않음.
+     * - SET DEFAULT: 부모 테이블의 row가 삭제될 때, 이를 참조하는 자식 테이블 row의 외래키를 부모 테이블에 설정된 기본 외래키를 따름.
+     *
+     * SET DEFAULT는 특정 상황에서 사용할 때 유용하다.
+     * 예를 들어, 특정 페이지의 관리자를 지정할 때, 기본 시스템 관리자가 있고, 추가적인 관리자를 지정할 수 있다고 가정해보자.
+     * 이 경우에 기본 시스템 관리자를 기본 외래키로 설정해두면, 추가적인 관리자가 삭제되더라도 기본 시스템 관리자로 외래키가 설정된다.
+     * 이를 통해 추가 관리자가 삭제되더라도 시스템 관리자는 항상 존재하기 때문에, 시스템이 정상적으로 작동할 수 있다.
+     * 하지만 기본 외래키로 설정된 시스템 관리자는 삭제할 수 없다.
+     */
+    onDelete: 'CASCADE',
+  })
+  // UserModel이 외래키(profileId)를 가지며, ProfileModel의 PK를 참조하도록 설정함.
+  // 결과적으로 UserModel 테이블에 profileId 컬럼이 생성되고, 이를 통해 ProfileModel과 1:1로 연결됨.
+  // 즉, ProfileModel이 부모 테이블이 되고, UserModel이 자식 테이블이 됨.
+  @JoinColumn()
   profile: ProfileModel;
 
   @OneToMany(() => PostModel, (post) => post.author)

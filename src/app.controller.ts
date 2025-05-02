@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -35,8 +35,9 @@ export class AppController {
       // },
       // select: ['title', 'id'], // 그냥 컬럼명을 배열로 넣어도 됨
       relations: {
-        profile: true, // 관계를 통해서 가져올 수 있는 데이터
-        posts: true,
+        // 관계를 통해서 가져올 수 있는 데이터
+        // profile: true, // user entity가 profile에 대한 eager 옵션을 true로 설정했기 때문에, 여기서 join을 하지 않아도 됨
+        // posts: true,
       },
     });
   }
@@ -55,14 +56,25 @@ export class AppController {
     });
   }
 
+  @Delete('users/profile/:id')
+  public async deleteUser(@Param('id') id: string): Promise<void> {
+    await this.profileRepository.delete(+id);
+  }
+
   @Post('users/profile')
   public async createUserAndProfile() {
-    const user = await this.createUser();
-
-    return await this.profileRepository.save({
-      profileImg: 'profile.png',
-      user,
+    return await this.userRepository.save({
+      email: 'cascade@test.com',
+      // cascade 옵션이 true로 설정되어 있을 때만 profile entity가 같이 생성됨
+      profile: {
+        profileImg: 'profile.png',
+      },
     });
+
+    // return await this.profileRepository.save({
+    //   profileImg: 'profile.png',
+    //   user,
+    // });
   }
 
   @Post('users/post')
