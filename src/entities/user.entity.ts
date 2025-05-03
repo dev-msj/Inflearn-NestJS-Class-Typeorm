@@ -94,7 +94,7 @@ export class UserModel {
     /* 여기 작성된 option들은 OneToOne, ManyToOne, ManyToMany에 모두 적용 가능하다. */
 
     // find()를 실행할 때마다 항상 relation된 entity도 같이 가져옴. 기본값은 false.
-    eager: true,
+    eager: false,
     // "저장"할 때 relation된 entity도 같이 저장됨. 기본값은 false.
     cascade: true,
     // null 허용 여부. 기본값은 true.

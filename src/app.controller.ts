@@ -35,10 +35,56 @@ export class AppController {
       // },
       // select: ['title', 'id'], // 그냥 컬럼명을 배열로 넣어도 됨
       relations: {
-        // 관계를 통해서 가져올 수 있는 데이터
-        // profile: true, // user entity가 profile에 대한 eager 옵션을 true로 설정했기 때문에, 여기서 join을 하지 않아도 됨
+        /**
+         * relations 옵션을 사용하여 join할 테이블을 지정할 수 있음.
+         * 여기서 지정된 테이블은 select나 where에서 사용 가능.
+         * 만약 eager 옵션이 true로 설정된 경우, 여기서 join을 하지 않아도 되며, select나 where에서도 사용 가능.
+         */
+        profile: true,
         // posts: true,
       },
+      select: {
+        /**
+         * select 옵션을 사용하여 가져올 컬럼을 지정할 수 있음.
+         * 기본은 모든 컬럼을 가져오므로, select 옵션을 사용하지 않으면 모든 컬럼을 가져옴.
+         */
+        id: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+        // relations 옵션이 true로 설정된 경우에만 사용 가능
+        profile: {
+          id: true,
+        },
+      },
+      where: [
+        /**
+         * 필터링할 조건을 지정할 수 있음.
+         * where에서  하나의 스코프({}) 안에 추가되는 조건은 AND 조건으로 연결됨.
+         * 여러 개의 스코프를 list 형태로 사용하면 OR 조건으로 연결됨.
+         */
+        {
+          version: 3,
+          // relations 옵션이 true로 설정된 경우에만 사용 가능
+          profile: {
+            id: 1,
+          },
+        },
+        {
+          id: 3,
+        },
+      ],
+      order: {
+        // 정렬할 컬럼을 지정할 수 있음.
+        // 기본은 오름차순 정렬. 내림차순 정렬은 'DESC'를 사용하면 됨.
+        id: 'ASC',
+        createdAt: 'DESC',
+      },
+      // 몇 개의 데이터를 건너뛸지 지정할 수 있음.
+      skip: 0,
+      // 몇 개의 데이터를 가져올지 지정할 수 있음.
+      // 옵션을 설정하지 않거나, 0으로 설정하면 모든 데이터를 가져옴.
+      take: 10,
     });
   }
 
@@ -53,6 +99,7 @@ export class AppController {
     return await this.userRepository.save({
       ...user,
       // title: user.title + '!',
+      email: 'user@email.com',
     });
   }
 
