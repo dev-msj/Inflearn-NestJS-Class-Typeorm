@@ -98,7 +98,7 @@ export class UserModel {
     // "저장"할 때 relation된 entity도 같이 저장됨. 기본값은 false.
     cascade: true,
     // null 허용 여부. 기본값은 true.
-    nullable: false,
+    nullable: true,
     /**
      * onDelete 옵션: postgresql에서만 사용 가능.
      *
