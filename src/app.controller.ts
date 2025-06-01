@@ -1,7 +1,20 @@
 import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
-import { Between, Equal, ILike, In, IsNull, LessThan, LessThanOrEqual, Like, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import {
+  Between,
+  Equal,
+  ILike,
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { ProfileModel } from './entities/profile.entity';
 import { PostModel } from './entities/post.entity';
 import { TagModel } from './entities/tag.entity';
@@ -35,6 +48,82 @@ export class AppController {
     return user;
   }
 
+  @Post('sample')
+  public async sample() {
+    // 모델에 해당되는 객체 생성 - 저장은 안함
+    // const user1 = this.userRepository.create({
+    //   email: 'test@devmsj.ai',
+    // });
+
+    // 모델에 해당되는 객체 생성 - 저장
+    // const user2 = await this.userRepository.save({
+    //   email: 'test@devmsj.ai',
+    // });
+
+    // preload - 많이 사용되지는 않음.
+    // 입력된 값을 기반으로 데이터베이스에 있는 데이터를 불러오고
+    // 추가 입력된 값으로 데이터베이스에서 가져온 값들을 대체함.
+    // 저장은 하지 않음. find와 create를 합친 것과 비슷함.
+    // const user3 = await this.userRepository.preload({
+    //   id: 101, // id가 101인 유저를 불러옴
+    //   email: 'devmsj@devmsj.ai',
+    // });
+
+    // await this.userRepository.delete(101); // id가 101인 유저를 삭제함
+
+    // id가 2인 유저의 count 컬럼을 100 증가시킴
+    // await this.userRepository.increment(
+    //   {
+    //     id: 2,
+    //   },
+    //   'count',
+    //   100,
+    // );
+
+    // id가 2인 유저의 count 컬럼을 3 감소시킴
+    // await this.userRepository.decrement(
+    //   {
+    //     id: 2,
+    //   },
+    //   'count',
+    //   3,
+    // );
+
+    // email이 '0'을 포함하는 유저의 수를 세는 쿼리
+    // const count = await this.userRepository.count({
+    //   where: {
+    //     email: ILike('%0%'),
+    //   },
+    // });
+
+    // email이 '0'을 포함하는 유저의 count 컬럼의 합계를 구하는 쿼리
+    // const sum = await this.userRepository.sum('count', {
+    //   email: ILike('%0%'),
+    // });
+
+    // id가 4보다 작은 유저의 count 컬럼의 평균값을 구하는 쿼리
+    // const average = await this.userRepository.average('count', {
+    //   id: LessThan(4),
+    // });
+
+    // id가 4보다 작은 유저의 count 컬럼의 최소값을 구하는 쿼리
+    // const min = await this.userRepository.minimum('count', {
+    //   id: LessThan(4),
+    // });
+
+    // id가 4보다 작은 유저의 count 컬럼의 최대값을 구하는 쿼리
+    // const max = await this.userRepository.maximum('count', {
+    //   id: LessThan(4),
+    // });
+
+    // 3개의 유저를 가져오고, 전체 유저의 수를 함께 반환하는 쿼리
+    const usersAndCount = await this.userRepository.findAndCount({
+      take: 3, // 가져올 데이터의 개수
+    });
+
+    return usersAndCount;
+  }
+
   @Get('users')
   public async getUsers(): Promise<UserModel[]> {
     return await this.userRepository.find({
@@ -49,7 +138,7 @@ export class AppController {
         // email: ILike('%GOOGLE%'), // 이메일이 'google'을 포함하는 모든 유저를 가져옴. 대소문자 구분하지 않음.
         // id: Between(1, 10), // id가 1과 10 사이인 모든 유저를 가져옴
         // id: In([1, 3, 5, 7, 99]), // id가 1, 3, 5, 7, 99인 유저를 가져옴
-        id: IsNull(), // id가 null인 유저를 가져옴
+        // id: IsNull(), // id가 null인 유저를 가져옴
       },
       // select: {
       //   title: true, // select 옵션이 false로 설정된 컬럼의 값을 가져오려고 할 때
@@ -95,12 +184,12 @@ export class AppController {
       //     id: 3,
       //   },
       // ],
-      // order: {
-      //   // 정렬할 컬럼을 지정할 수 있음.
-      //   // 기본은 오름차순 정렬. 내림차순 정렬은 'DESC'를 사용하면 됨.
-      //   id: 'ASC',
-      //   createdAt: 'DESC',
-      // },
+      order: {
+        // 정렬할 컬럼을 지정할 수 있음.
+        // 기본은 오름차순 정렬. 내림차순 정렬은 'DESC'를 사용하면 됨.
+        id: 'ASC',
+        createdAt: 'DESC',
+      },
       // // 몇 개의 데이터를 건너뛸지 지정할 수 있음.
       // skip: 0,
       // // 몇 개의 데이터를 가져올지 지정할 수 있음.
