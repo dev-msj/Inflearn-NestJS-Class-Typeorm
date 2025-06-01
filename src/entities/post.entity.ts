@@ -33,6 +33,9 @@ export class PostModel {
   // 이 테이블에 대한 생성 및 관리 권한을 가짐
   // 반대쪽(TagModel)에서는 @JoinTable()을 선언하지 않음
   @ManyToMany(() => TagModel, (tag) => tag.posts)
-  @JoinTable() // 현재 클래스를 중간 테이블 생성 및 관계의 주인(owner)으로 지정
+
+  // 현재 클래스를 중간 테이블 생성 및 관계의 주인(owner)으로 지정
+  // @JoinTable은 Many-to-Many 관계에서 두 테이블의 기본 키를 참조하는 중간 연결 테이블(Junction Table)을 TypeORM이 자동으로 생성하고 관리하도록 지시하는 역할을 함.
+  @JoinTable()
   tags: TagModel[];
 }

@@ -95,7 +95,7 @@ export class UserModel {
 
     // find()를 실행할 때마다 항상 relation된 entity도 같이 가져옴. 기본값은 false.
     eager: false,
-    // "저장"할 때 relation된 entity도 같이 저장됨. 기본값은 false.
+    // "저장"할 때 relation된 entity도 같이 저장됨. 기본값은 false. 관계된 엔티티를 모두 지우는 cascade와 다름.
     cascade: true,
     // null 허용 여부. 기본값은 true.
     nullable: true,
@@ -127,4 +127,9 @@ export class UserModel {
 
   @OneToMany(() => PostModel, (post) => post.author)
   posts: PostModel[];
+
+  @Column({
+    default: 0,
+  })
+  count: number;
 }
